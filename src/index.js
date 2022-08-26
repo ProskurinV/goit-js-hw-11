@@ -1,7 +1,91 @@
-const axios = require('axios');
+import axios from 'axios';
+import PixabayApiService from './js/pixabay-API-service';
+// import { getImg } from './js/functionGet';
+import form from './partials/form.html';
+import imgTmbl from './partials/templateImg.html';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const form = document.querySelector('#search-form');
+// Уведомление
+// После первого запроса при каждом новом поиске выводить уведомление в котором будет написано сколько всего нашли изображений (свойство totalHits). Текст уведомления "Hooray! We found totalHits images."
 
-form.addEventListener('submit', onFormSubmit);
+// Notiflix.Notify.success('Hooray! We found totalHits images.');
+
+// В ответе бэкенд возвращает свойство totalHits - общее количество изображений которые подошли под критерий поиска (для бесплатного аккаунта). Если пользователь дошел до конца коллекции, пряч кнопку и выводи уведомление с текстом "We're sorry, but you've reached the end of search results."
+
+// Notiflix.Notify.info('We're sorry, but you've reached the end of search results.');
+
+const formEl = document.querySelector('#search-form');
+const loadMoreBtn = document.querySelector('.load-more');
+
+const pixabayApiService = new PixabayApiService();
+
+formEl.addEventListener('submit', onSearch);
+
+loadMoreBtn.addEventListener('click', onLoadMore);
+
+function onSearch(event) {
+  event.preventDefault();
+
+  pixabayApiService.searchQuery =
+    event.currentTarget.elements.searchQuery.value;
+
+  pixabayApiService.fetchImg();
+}
+
+function onLoadMore() {
+  pixabayApiService.fetchImg();
+}
+
+// За бажанням вищевказаний запит також можна виконати так
+// axios.get('/user', {
+//     params: {
+//       ID: 12345
+//     }
+//   })
+//   .then(function (response) {
+//     console.log(response);
+//   })
+//   .catch(function (error) {
+//     console.log(error);
+//   })
+//   .then(function () {
+//     // виконується завжди
+//   });
+
+// // Хочете використовувати async/await? Додайте ключове слово `async` до своєї зовнішньої функції/методу.
+// async function getUser() {
+//   try {
+//     const response = await axios.get('/user?ID=12345');
+//     console.log(response);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// const { height: cardHeight } = document
+//   .querySelector('.gallery')
+//   .firstElementChild.getBoundingClientRect();
+
+// window.scrollBy({
+//   top: cardHeight * 2,
+//   behavior: 'smooth',
+// });
+
+// Вместо кнопки «Load more» можно сделать бесконечную загрузку изображений при прокрутке страницы. Мы предоставлям тебе полную свободу действий в реализации, можешь использовать любые библиотеки.
+
+// Пагинация
+// Pixabay API поддерживает пагинацию и предоставляет параметры page и per_page. Сделай так, чтобы в каждом ответе приходило 40 объектов (по умолчанию 20).
+
+// Изначально значение параметра page должно быть 1.
+// При каждом последующем запросе, его необходимо увеличить на 1.
+// При поиске по новому ключевому слову значение page надо вернуть в исходное, так как будет пагинация по новой коллекции изображений.
+// В HTML документе уже есть разметка кнопки при клике по которой необходимо выполнять запрос за следующей группой изображений и добавлять разметку к уже существующим элементам галереи.
+
+// <button type="button" class="load-more">Load more</button>
+
+// Изначально кнопка должна быть скрыта.
+// После первого запроса кнопка появляется в интерфейсе под галереей.
+// При повторном сабмите формы кнопка сначала прячется, а после запроса опять отображается.
+// В ответе бэкенд возвращает свойство totalHits - общее количество изображений которые подошли под критерий поиска (для бесплатного аккаунта). Если пользователь дошел до конца коллекции, пряч кнопку и выводи уведомление с текстом "We're sorry, but you've reached the end of search results.".
