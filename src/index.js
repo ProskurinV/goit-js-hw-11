@@ -1,8 +1,6 @@
-import axios from 'axios';
 import PixabayApiService from './js/pixabay-API-service';
-// import { getImg } from './js/functionGet';
-import form from './partials/form.html';
-import imgTmbl from './partials/templateImg.html';
+// import imgTmpl from './js/ImgTpl';
+// import { renderImg } from './js/renderImg';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -17,7 +15,9 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 // Notiflix.Notify.info('We're sorry, but you've reached the end of search results.');
 
 const formEl = document.querySelector('#search-form');
+const input = document.querySelector('input');
 const loadMoreBtn = document.querySelector('.load-more');
+const imgContainer = document.querySelector('.gallery');
 
 const pixabayApiService = new PixabayApiService();
 
@@ -29,13 +29,67 @@ function onSearch(event) {
   event.preventDefault();
 
   pixabayApiService.searchQuery =
-    event.currentTarget.elements.searchQuery.value;
+    event.currentTarget.elements.searchQuery.value.trim();
+  if (pixabayApiService.searchQuery === '') {
+    return Notiflix.Notify.warning('Write something');
+  }
 
-  pixabayApiService.fetchImg();
+  pixabayApiService.resetPage();
+
+  pixabayApiService.fetchImg().then(renderImg);
+  //  clearImgContainer();
+  //  renderImg(hits);
+  // .catch(onFetchError);
+}
+
+// function renderImg(hits) {
+//   imgContainer.insertAdjacentHTML('beforeend', imgTmpl(hits));
+// }
+
+function renderImg(hits) {
+  const markupImg = hits
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `<div class="photo-card">
+  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+  <div class="info">
+    <p class="info-item">
+      <b>Likes</b>${likes}
+    </p>
+    <p class="info-item">
+      <b>Views</b>${views}
+    </p>
+    <p class="info-item">
+      <b>Comments</b>${comments}
+    </p>
+    <p class="info-item">
+      <b>Downloads</b>${downloads}
+    </p>
+  </div>
+</div>`
+    )
+    .join();
+  imgContainer.insertAdjacentHTML('beforeend', markupImg);
+}
+
+function onFetchError(error) {
+  Notiflix.Notify.warning('Oops, smth wrong');
 }
 
 function onLoadMore() {
-  pixabayApiService.fetchImg();
+  pixabayApiService.fetchImg().then(renderImg);
+  // .then(renderImg);
+}
+
+function clearImgContainer() {
+  imgContainer.innerHTML = '';
 }
 
 // За бажанням вищевказаний запит також можна виконати так
