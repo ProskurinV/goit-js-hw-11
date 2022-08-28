@@ -17,10 +17,10 @@ export default class PixabayApiService {
       `${BASE_URL}?${myKey}&q=${this.query}&${elseParams}&page=${this.page}`
     )
       .then(response => response.json())
-      .then(data => {
+      .then(({ hits }) => {
         this.incrementPage();
 
-        return data.hits;
+        return hits;
       });
   }
 

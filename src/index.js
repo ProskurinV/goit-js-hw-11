@@ -1,5 +1,5 @@
 import PixabayApiService from './js/pixabay-API-service';
-// import imgTmpl from './js/ImgTpl';
+import LoadMoreBtnApi from './js/loadMoreBtn';
 // import { renderImg } from './js/renderImg';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
@@ -16,14 +16,18 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const formEl = document.querySelector('#search-form');
 const input = document.querySelector('input');
-const loadMoreBtn = document.querySelector('.load-more');
+// const loadMoreBtn = document.querySelector('.load-more');
 const imgContainer = document.querySelector('.gallery');
 
 const pixabayApiService = new PixabayApiService();
+const loadMoreBtn = new LoadMoreBtnApi({
+  selector: '.load-more',
+  hidden: true,
+});
 
 formEl.addEventListener('submit', onSearch);
 
-loadMoreBtn.addEventListener('click', onLoadMore);
+loadMoreBtn.refs.button.addEventListener('click', fetchHitsPixab);
 
 function onSearch(event) {
   event.preventDefault();
@@ -34,17 +38,12 @@ function onSearch(event) {
     return Notiflix.Notify.warning('Write something');
   }
 
+  loadMoreBtn.show();
   pixabayApiService.resetPage();
-
-  pixabayApiService.fetchImg().then(renderImg);
-  //  clearImgContainer();
-  //  renderImg(hits);
+  clearImgContainer();
+  fetchHitsPixab();
   // .catch(onFetchError);
 }
-
-// function renderImg(hits) {
-//   imgContainer.insertAdjacentHTML('beforeend', imgTmpl(hits));
-// }
 
 function renderImg(hits) {
   const markupImg = hits
@@ -58,7 +57,8 @@ function renderImg(hits) {
         comments,
         downloads,
       }) => `<div class="photo-card">
-  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+  <a class="gallery-item" href="${largeImageURL}">
+  <img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>${likes}
@@ -83,40 +83,17 @@ function onFetchError(error) {
   Notiflix.Notify.warning('Oops, smth wrong');
 }
 
-function onLoadMore() {
-  pixabayApiService.fetchImg().then(renderImg);
-  // .then(renderImg);
+function fetchHitsPixab() {
+  loadMoreBtn.disable();
+  pixabayApiService.fetchImg().then(hits => {
+    renderImg(hits);
+    loadMoreBtn.enable();
+  });
 }
 
 function clearImgContainer() {
   imgContainer.innerHTML = '';
 }
-
-// За бажанням вищевказаний запит також можна виконати так
-// axios.get('/user', {
-//     params: {
-//       ID: 12345
-//     }
-//   })
-//   .then(function (response) {
-//     console.log(response);
-//   })
-//   .catch(function (error) {
-//     console.log(error);
-//   })
-//   .then(function () {
-//     // виконується завжди
-//   });
-
-// // Хочете використовувати async/await? Додайте ключове слово `async` до своєї зовнішньої функції/методу.
-// async function getUser() {
-//   try {
-//     const response = await axios.get('/user?ID=12345');
-//     console.log(response);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
 
 // const { height: cardHeight } = document
 //   .querySelector('.gallery')
