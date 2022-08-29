@@ -1,4 +1,4 @@
-export function renderImg(hits) {
+export default function renderImg({ hits }) {
   const markupImg = hits
     .map(
       ({

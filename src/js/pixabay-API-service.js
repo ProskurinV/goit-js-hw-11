@@ -4,7 +4,6 @@ const BASE_URL = 'https://pixabay.com/api/';
 const myKey = 'key=29439204-c21465a1feaf8a905890908f9';
 const elseParams =
   'image_type=photo&orientation=horizontal&safesearch=true&per_page=40';
-// let items = [];
 
 export default class PixabayApiService {
   constructor() {
@@ -13,12 +12,12 @@ export default class PixabayApiService {
   }
 
   async fetchImg() {
-    const response = await fetch(
+    const response = await axios.get(
       `${BASE_URL}?${myKey}&q=${this.query}&${elseParams}&page=${this.page}`
     );
-    const { hits, totalHits } = await response.json();
+
     this.incrementPage();
-    return hits;
+    return response;
   }
 
   // fetchImg() {
@@ -41,11 +40,11 @@ export default class PixabayApiService {
     this.page = 1;
   }
 
-  get searchQuery() {
-    return this.query;
-  }
+  // get searchQuery() {
+  //   return this.query;
+  // }
 
-  set searchQuery(newQuery) {
-    this.query = newQuery;
-  }
+  // set searchQuery(newQuery) {
+  //   this.query = newQuery;
+  // }
 }

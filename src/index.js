@@ -6,16 +6,16 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 // Уведомление
-// После первого запроса при каждом новом поиске выводить уведомление в котором будет написано сколько всего нашли изображений (свойство totalHits). Текст уведомления "Hooray! We found totalHits images."
+// После первого запроса при каждом новом поиске выводить уведомление в котором будет написано сколько всего нашли изображений (свойство totalHits). Текст уведомления "Hooray! We found ${totalHits} images."
 
-// Notiflix.Notify.success('Hooray! We found totalHits images.');
+// Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
 
 // В ответе бэкенд возвращает свойство totalHits - общее количество изображений которые подошли под критерий поиска (для бесплатного аккаунта). Если пользователь дошел до конца коллекции, пряч кнопку и выводи уведомление с текстом "We're sorry, but you've reached the end of search results."
 
 // Notiflix.Notify.info('We're sorry, but you've reached the end of search results.');
 
 const formEl = document.querySelector('#search-form');
-const input = document.querySelector('input');
+// const input = document.querySelector('input');
 const imgContainer = document.querySelector('.gallery');
 
 const pixabayApiService = new PixabayApiService();
@@ -25,15 +25,18 @@ const loadMoreBtn = new LoadMoreBtnApi({
   hidden: true,
 });
 
-// const lightbox = new SimpleLightbox('.gallery a', {
-//   captionPosition: 'bottom',
-//   captionType: 'attr',
-//   captionsData: 'alt',
-//   captionDelay: 250,
-// });
+// const lightbox = new SimpleLightbox(
+//   '.gallery a'
+//   // ,
+//   //   {
+//   //   captionPosition: 'bottom',
+//   //   captionType: 'attr',
+//   //   captionsData: 'alt',
+//   //   captionDelay: 250,
+//   //   }
+// );
 
 // var gallery = $('.gallery a').simpleLightbox();
-// gallery.refresh();
 
 formEl.addEventListener('submit', onSearch);
 
@@ -52,10 +55,13 @@ function onSearch(event) {
   pixabayApiService.resetPage();
   clearImgContainer();
   fetchHitsPixab();
-  // .catch(onFetchError);
 }
 
-function renderImg(hits) {
+function clearImgContainer() {
+  imgContainer.innerHTML = '';
+}
+
+function renderImg({ hits }) {
   const markupImg = hits
     .map(
       ({
@@ -66,7 +72,8 @@ function renderImg(hits) {
         views,
         comments,
         downloads,
-      }) => `<div class="photo-card"><a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+      }) => `<div class="photo-card">
+            <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>${likes}
@@ -84,6 +91,7 @@ function renderImg(hits) {
 </div>`
     )
     .join('');
+
   imgContainer.insertAdjacentHTML('beforeend', markupImg);
 }
 
@@ -93,14 +101,23 @@ function onFetchError(error) {
 
 function fetchHitsPixab() {
   loadMoreBtn.disable();
-  pixabayApiService.fetchImg().then(hits => {
-    renderImg(hits);
-    loadMoreBtn.enable();
-  });
-}
+  pixabayApiService
+    .fetchImg()
+    .then(({ data }) => {
+      if (data.total === 0) {
+        Notiflix.Notify.info(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        loadMoreBtn.hide();
+        return;
+      }
 
-function clearImgContainer() {
-  imgContainer.innerHTML = '';
+      renderImg(data);
+      // lightbox.refresh();
+
+      loadMoreBtn.enable();
+    })
+    .catch(onFetchError);
 }
 
 // const { height: cardHeight } = document
