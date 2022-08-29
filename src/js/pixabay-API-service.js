@@ -12,17 +12,26 @@ export default class PixabayApiService {
     this.page = 1;
   }
 
-  fetchImg() {
-    return fetch(
+  async fetchImg() {
+    const response = await fetch(
       `${BASE_URL}?${myKey}&q=${this.query}&${elseParams}&page=${this.page}`
-    )
-      .then(response => response.json())
-      .then(({ hits }) => {
-        this.incrementPage();
-
-        return hits;
-      });
+    );
+    const { hits, totalHits } = await response.json();
+    this.incrementPage();
+    return hits;
   }
+
+  // fetchImg() {
+  //   return fetch(
+  //     `${BASE_URL}?${myKey}&q=${this.query}&${elseParams}&page=${this.page}`
+  //   )
+  //     .then(response => response.json())
+  //     .then(({ hits }) => {
+  //       this.incrementPage();
+
+  //       return hits;
+  //     });
+  // }
 
   incrementPage() {
     this.page += 1;

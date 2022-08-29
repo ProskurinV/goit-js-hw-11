@@ -19,10 +19,21 @@ const input = document.querySelector('input');
 const imgContainer = document.querySelector('.gallery');
 
 const pixabayApiService = new PixabayApiService();
+
 const loadMoreBtn = new LoadMoreBtnApi({
   selector: '.load-more',
   hidden: true,
 });
+
+// const lightbox = new SimpleLightbox('.gallery a', {
+//   captionPosition: 'bottom',
+//   captionType: 'attr',
+//   captionsData: 'alt',
+//   captionDelay: 250,
+// });
+
+// var gallery = $('.gallery a').simpleLightbox();
+// gallery.refresh();
 
 formEl.addEventListener('submit', onSearch);
 
