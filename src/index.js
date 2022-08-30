@@ -105,11 +105,11 @@ function fetchHitsPixab() {
       renderImg(data);
       lightbox.refresh();
       loadMoreBtn.enable();
-      if (data.totalHits <= data.hits) {
-        Notiflix.Notify.info(
-          `'We're sorry, but you've reached the end of search results.'`
-        );
-      }
+      // if (data.totalHits <= data.hits) {
+      //   Notiflix.Notify.info(
+      //     `'We're sorry, but you've reached the end of search results.'`
+      //   );
+      // }
     });
   } catch (onFetchError) {}
 }

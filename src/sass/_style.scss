@@ -9,16 +9,19 @@ body {
     Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.5;
   color: #2a2a2a;
+  padding-top: 25px;
 }
 
-// img {
-//   display: block;
-//   max-width: 100%;
-//   height: auto;
-// }
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
 .search-form {
   position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   width: 100%;
