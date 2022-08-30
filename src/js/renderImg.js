@@ -1,4 +1,4 @@
-export default function renderImg({ hits }) {
+export function renderImg({ hits }) {
   const markupImg = hits
     .map(
       ({
@@ -9,8 +9,7 @@ export default function renderImg({ hits }) {
         views,
         comments,
         downloads,
-      }) => `<div class="photo-card">
-  <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+      }) => `<div class="photo-card"><a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>${likes}
@@ -27,6 +26,6 @@ export default function renderImg({ hits }) {
   </div>
 </div>`
     )
-    .join();
+    .join('');
   imgContainer.insertAdjacentHTML('beforeend', markupImg);
 }

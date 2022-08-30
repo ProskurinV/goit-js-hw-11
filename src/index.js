@@ -5,17 +5,8 @@ import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-// Уведомление
-// После первого запроса при каждом новом поиске выводить уведомление в котором будет написано сколько всего нашли изображений (свойство totalHits). Текст уведомления "Hooray! We found ${totalHits} images."
-
-// Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-
-// В ответе бэкенд возвращает свойство totalHits - общее количество изображений которые подошли под критерий поиска (для бесплатного аккаунта). Если пользователь дошел до конца коллекции, пряч кнопку и выводи уведомление с текстом "We're sorry, but you've reached the end of search results."
-
-// Notiflix.Notify.info('We're sorry, but you've reached the end of search results.');
-
 const formEl = document.querySelector('#search-form');
-// const input = document.querySelector('input');
+const input = document.querySelector('input');
 const imgContainer = document.querySelector('.gallery');
 
 const pixabayApiService = new PixabayApiService();
@@ -25,21 +16,14 @@ const loadMoreBtn = new LoadMoreBtnApi({
   hidden: true,
 });
 
-// const lightbox = new SimpleLightbox(
-//   '.gallery a'
-//   // ,
-//   //   {
-//   //   captionPosition: 'bottom',
-//   //   captionType: 'attr',
-//   //   captionsData: 'alt',
-//   //   captionDelay: 250,
-//   //   }
-// );
+const lightbox = new SimpleLightbox('.gallery a');
+
+// В ответе бэкенд возвращает свойство totalHits - общее количество изображений которые подошли под критерий поиска (для бесплатного аккаунта). Если пользователь дошел до конца коллекции, пряч кнопку и выводи уведомление с текстом "We're sorry, but you've reached the end of search results."
+
+// Notiflix.Notify.info('We're sorry, but you've reached the end of search results.');
 
 // var gallery = $('.gallery a').simpleLightbox();
-
-let hits = [];
-let totalHits = 0;
+// gallery.refresh();
 
 formEl.addEventListener('submit', onSearch);
 
@@ -54,54 +38,28 @@ function onSearch(event) {
     if (pixabayApiService.searchQuery === '') {
       return Notiflix.Notify.warning('Write something');
     }
-
-    // console.log(pixabayApiService.searchQuery);
+    pixabayApiService.fetchImg().then(({ data }) => {
+      if (data.total === 0) {
+        Notiflix.Notify.info(
+          `Sorry, there are no images matching your ${pixabayApiService.searchQuery}. Please try again.`
+        );
+      } else if (data.total !== 0) {
+        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      } else {
+        return;
+      }
+    });
 
     loadMoreBtn.show();
     pixabayApiService.resetPage();
     clearImgContainer();
-    // hits = [];
     fetchHitsPixab();
-  } catch (error) {}
+  } catch (onFetchError) {}
 }
 
 function clearImgContainer() {
   imgContainer.innerHTML = '';
 }
-
-// function renderImg({ hits }) {
-//   const markupImg = hits
-//     .map(
-//       ({
-//         webformatURL,
-//         largeImageURL,
-//         tags,
-//         likes,
-//         views,
-//         comments,
-//         downloads,
-//       }) => `<div class="photo-card">
-//             <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes</b>${likes}
-//     </p>
-//     <p class="info-item">
-//       <b>Views</b>${views}
-//     </p>
-//     <p class="info-item">
-//       <b>Comments</b>${comments}
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads</b>${downloads}
-//     </p>
-//   </div>
-// </div>`
-//     )
-//     .join('');
-
-//   imgContainer.insertAdjacentHTML('beforeend', markupImg);
-// }
 
 function renderImg({ hits }) {
   const markupImg = hits
@@ -114,8 +72,7 @@ function renderImg({ hits }) {
         views,
         comments,
         downloads,
-      }) => `<div class="photo-card">
-            <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+      }) => `<div class="photo-card"><a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>${likes}
@@ -133,7 +90,6 @@ function renderImg({ hits }) {
 </div>`
     )
     .join('');
-
   imgContainer.insertAdjacentHTML('beforeend', markupImg);
 }
 
@@ -142,40 +98,15 @@ function onFetchError(error) {
 }
 
 function fetchHitsPixab() {
-  try {
-    loadMoreBtn.disable();
-    pixabayApiService.fetchImg();
-    if (total === 0) {
-      Notiflix.Notify.info(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-      loadMoreBtn.hide();
-      return;
-    }
+  loadMoreBtn.disable();
 
-    // items = [...items, data.hits];
-    // totalHits = data.totalHits;
-
-    renderImg({ hits });
-    // lightbox.refresh();
-
+  pixabayApiService.fetchImg().then(({ data }) => {
+    renderImg(data);
     loadMoreBtn.enable();
-
-    // .catch(onFetchError);
-  } catch (onFetchError) {}
+    // if (totalHits >= hits.length) {
+    //   Notiflix.Notify.info(
+    //     `'We're sorry, but you've reached the end of search results.'`
+    //   );
+    // }
+  });
 }
-
-// const { height: cardHeight } = document
-//   .querySelector('.gallery')
-//   .firstElementChild.getBoundingClientRect();
-
-// window.scrollBy({
-//   top: cardHeight * 2,
-//   behavior: 'smooth',
-// });
-
-// Вместо кнопки «Load more» можно сделать бесконечную загрузку изображений при прокрутке страницы. Мы предоставлям тебе полную свободу действий в реализации, можешь использовать любые библиотеки.
-
-// После первого запроса кнопка появляется в интерфейсе под галереей.
-// При повторном сабмите формы кнопка сначала прячется, а после запроса опять отображается.
-// В ответе бэкенд возвращает свойство totalHits - общее количество изображений которые подошли под критерий поиска (для бесплатного аккаунта). Если пользователь дошел до конца коллекции, пряч кнопку и выводи уведомление с текстом "We're sorry, but you've reached the end of search results.".
