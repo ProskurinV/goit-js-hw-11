@@ -38,28 +38,70 @@ const loadMoreBtn = new LoadMoreBtnApi({
 
 // var gallery = $('.gallery a').simpleLightbox();
 
+let hits = [];
+let totalHits = 0;
+
 formEl.addEventListener('submit', onSearch);
 
 loadMoreBtn.refs.button.addEventListener('click', fetchHitsPixab);
 
 function onSearch(event) {
-  event.preventDefault();
+  try {
+    event.preventDefault();
 
-  pixabayApiService.searchQuery =
-    event.currentTarget.elements.searchQuery.value.trim();
-  if (pixabayApiService.searchQuery === '') {
-    return Notiflix.Notify.warning('Write something');
-  }
+    pixabayApiService.searchQuery =
+      event.currentTarget.elements.searchQuery.value.trim();
+    if (pixabayApiService.searchQuery === '') {
+      return Notiflix.Notify.warning('Write something');
+    }
 
-  loadMoreBtn.show();
-  pixabayApiService.resetPage();
-  clearImgContainer();
-  fetchHitsPixab();
+    // console.log(pixabayApiService.searchQuery);
+
+    loadMoreBtn.show();
+    pixabayApiService.resetPage();
+    clearImgContainer();
+    // hits = [];
+    fetchHitsPixab();
+  } catch (error) {}
 }
 
 function clearImgContainer() {
   imgContainer.innerHTML = '';
 }
+
+// function renderImg({ hits }) {
+//   const markupImg = hits
+//     .map(
+//       ({
+//         webformatURL,
+//         largeImageURL,
+//         tags,
+//         likes,
+//         views,
+//         comments,
+//         downloads,
+//       }) => `<div class="photo-card">
+//             <a class="gallery-item" href="${largeImageURL}"><img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+//   <div class="info">
+//     <p class="info-item">
+//       <b>Likes</b>${likes}
+//     </p>
+//     <p class="info-item">
+//       <b>Views</b>${views}
+//     </p>
+//     <p class="info-item">
+//       <b>Comments</b>${comments}
+//     </p>
+//     <p class="info-item">
+//       <b>Downloads</b>${downloads}
+//     </p>
+//   </div>
+// </div>`
+//     )
+//     .join('');
+
+//   imgContainer.insertAdjacentHTML('beforeend', markupImg);
+// }
 
 function renderImg({ hits }) {
   const markupImg = hits
@@ -100,24 +142,27 @@ function onFetchError(error) {
 }
 
 function fetchHitsPixab() {
-  loadMoreBtn.disable();
-  pixabayApiService
-    .fetchImg()
-    .then(({ data }) => {
-      if (data.total === 0) {
-        Notiflix.Notify.info(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        loadMoreBtn.hide();
-        return;
-      }
+  try {
+    loadMoreBtn.disable();
+    pixabayApiService.fetchImg();
+    if (total === 0) {
+      Notiflix.Notify.info(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      loadMoreBtn.hide();
+      return;
+    }
 
-      renderImg(data);
-      // lightbox.refresh();
+    // items = [...items, data.hits];
+    // totalHits = data.totalHits;
 
-      loadMoreBtn.enable();
-    })
-    .catch(onFetchError);
+    renderImg({ hits });
+    // lightbox.refresh();
+
+    loadMoreBtn.enable();
+
+    // .catch(onFetchError);
+  } catch (onFetchError) {}
 }
 
 // const { height: cardHeight } = document

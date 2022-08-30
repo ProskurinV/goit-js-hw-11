@@ -20,10 +20,14 @@
       <button type="submit">Search</button>
     </form>
 
-    <div class="gallery"></div>
+    <div
+      class="gallery"
+      data-infinite-scroll='{ "path": ".pagination__next", "append": ".post", "history": false }'
+    ></div>
 
     <button type="button" class="load-more">Load more</button>
 
     <script type="module" src="./index.js"></script>
+    <!-- <script src="/path/to/infinite-scroll.pkgd.min.js"></script> -->
   </body>
 </html>
