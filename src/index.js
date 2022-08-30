@@ -98,15 +98,18 @@ function onFetchError(error) {
 }
 
 function fetchHitsPixab() {
-  loadMoreBtn.disable();
+  try {
+    loadMoreBtn.disable();
 
-  pixabayApiService.fetchImg().then(({ data }) => {
-    renderImg(data);
-    loadMoreBtn.enable();
-    // if (totalHits >= hits.length) {
-    //   Notiflix.Notify.info(
-    //     `'We're sorry, but you've reached the end of search results.'`
-    //   );
-    // }
-  });
+    pixabayApiService.fetchImg().then(({ data }) => {
+      renderImg(data);
+      lightbox.refresh();
+      loadMoreBtn.enable();
+      if (data.totalHits <= data.hits) {
+        Notiflix.Notify.info(
+          `'We're sorry, but you've reached the end of search results.'`
+        );
+      }
+    });
+  } catch (onFetchError) {}
 }
