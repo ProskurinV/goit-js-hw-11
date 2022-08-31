@@ -105,7 +105,7 @@ function fetchHitsPixab() {
 
     pixabayApiService.fetchImg().then(({ data }) => {
       renderImg(data);
-      smoothScroll();
+      // smoothScroll();
       lightbox.refresh();
 
       loadMoreBtn.enable();
