@@ -54,7 +54,7 @@ function clearImgContainer() {
 
 function smoothScroll() {
   const { height: cardHeight } = document
-    .querySelector('.gallery')
+    .querySelector('body')
     .firstElementChild.getBoundingClientRect();
 
   window.scrollBy({
