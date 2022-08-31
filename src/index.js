@@ -105,11 +105,6 @@ function fetchHitsPixab() {
 
     pixabayApiService.fetchImg().then(({ data }) => {
       renderImg(data);
-      // smoothScroll();
-      lightbox.refresh();
-
-      loadMoreBtn.enable();
-
       const totalPages = Math.ceil(data.totalHits / pixabayApiService.perPage);
       if (pixabayApiService.page - 1 === totalPages + 1) {
         Notiflix.Notify.info(
@@ -118,6 +113,9 @@ function fetchHitsPixab() {
         loadMoreBtn.hide();
         return;
       }
+      smoothScroll();
+      lightbox.refresh();
+      loadMoreBtn.enable();
     });
   } catch (onFetchError) {}
 }
