@@ -39,6 +39,10 @@ button:not([id]):not([class]) {
   background-size: contain;
   border-radius: 4px;
   cursor: pointer;
+  &:hover,
+  &:focus {
+    background-color: wheat;
+  }
 }
 
 .load-more {
@@ -53,6 +57,10 @@ button:not([id]):not([class]) {
   cursor: pointer;
   // border: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  &:hover,
+  &:focus {
+    background-color: #555;
+  }
 }
 
 .load-more.is-hidden {
