@@ -13,12 +13,6 @@ body {
   padding-bottom: 20px;
 }
 
-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
 .search-form {
   position: fixed;
   top: 0;
@@ -30,6 +24,21 @@ img {
   margin-bottom: 24px;
 
   background-color: cornflowerblue;
+
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+button:not([id]):not([class]) {
+  display: flex;
+  justify-content: space-around;
+  background-image: url(../img/icon-search.svg);
+  background-repeat: no-repeat;
+  background-position: right;
+  width: 100px;
+  background-size: contain;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .load-more {
@@ -37,9 +46,13 @@ img {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
+  padding: 5px 10px;
   background-color: cornflowerblue;
   border-radius: 4px;
-  border: white;
+  color: white;
+  cursor: pointer;
+  // border: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .load-more.is-hidden {
@@ -61,6 +74,13 @@ input {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 30px;
+}
+
+.photo-card {
+  &:hover,
+  &:focus {
+    box-shadow: 0px 4px 4px 0px #00000040;
+  }
 }
 
 .gallery img {
