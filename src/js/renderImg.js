@@ -1,4 +1,6 @@
-export function renderImg({ hits }) {
+import { imgContainer } from './const-names';
+
+export default function renderImg({ hits }) {
   const markupImg = hits
     .map(
       ({
