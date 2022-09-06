@@ -48,15 +48,15 @@ function clearImgContainer() {
   imgContainer.innerHTML = '';
 }
 
-// function smoothScroll() {
-//   const { height: cardHeight } = document
-//     .querySelector('body')
-//     .firstElementChild.getBoundingClientRect();
-//   window.scrollBy({
-//     top: cardHeight * 2,
-//     behavior: 'smooth',
-//   });
-// }
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
 
 function fetchHitsPixab() {
   try {
@@ -71,18 +71,8 @@ function fetchHitsPixab() {
         loadMoreBtn.hide();
         return;
       }
-      // window.scrollBy({
-      //   top: cardHeight * 2,
-      //   behavior: 'smooth',
-      // });
       lightbox.refresh();
       loadMoreBtn.enable();
     });
   } catch (onFetchError) {}
 }
-
-// ----------------------------------
-
-// const { height: cardHeight } = document
-//   .querySelector('body')
-//   .firstElementChild.getBoundingClientRect();

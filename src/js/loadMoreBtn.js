@@ -34,4 +34,14 @@ export default class LoadMoreBtnApi {
   hide() {
     this.refs.button.classList.add('is-hidden');
   }
+
+  smoothScroll() {
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
 }
