@@ -6,11 +6,16 @@ import { formEl, imgContainer, upBtn } from './js/const-names';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import OnlyScroll from 'only-scrollbar';
 
 const pixabayApiService = new PixabayApiService();
 const loadMoreBtn = new LoadMoreBtnApi({
   selector: '.load-more',
   hidden: true,
+});
+
+const scroll = new OnlyScroll(window, {
+  damping: 0.5,
 });
 
 const lightbox = new SimpleLightbox('.gallery a');
