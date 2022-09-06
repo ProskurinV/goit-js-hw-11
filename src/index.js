@@ -48,21 +48,22 @@ function clearImgContainer() {
   imgContainer.innerHTML = '';
 }
 
-function smoothScroll() {
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
-}
+// function smoothScroll() {
+//   const { height: cardHeight } = document
+//     .querySelector('.gallery')
+//     .firstElementChild.getBoundingClientRect();
+//   window.scrollBy({
+//     top: cardHeight * 2,
+//     behavior: 'smooth',
+//   });
+// }
 
 function fetchHitsPixab() {
   try {
     loadMoreBtn.disable();
     pixabayApiService.fetchImg().then(({ data }) => {
       renderImg(data);
+      lightbox.refresh();
       const totalPages = Math.ceil(data.totalHits / pixabayApiService.perPage);
       if (pixabayApiService.page - 1 === totalPages + 1) {
         Notiflix.Notify.info(
@@ -71,7 +72,6 @@ function fetchHitsPixab() {
         loadMoreBtn.hide();
         return;
       }
-      lightbox.refresh();
       loadMoreBtn.enable();
     });
   } catch (onFetchError) {}
