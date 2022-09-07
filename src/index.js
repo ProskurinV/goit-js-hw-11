@@ -53,16 +53,6 @@ function clearImgContainer() {
   imgContainer.innerHTML = '';
 }
 
-// function smoothScroll() {
-//   const { height: cardHeight } = document
-//     .querySelector('.gallery')
-//     .firstElementChild.getBoundingClientRect();
-//   window.scrollBy({
-//     top: cardHeight * 2,
-//     behavior: 'smooth',
-//   });
-// }
-
 function fetchHitsPixab() {
   try {
     loadMoreBtn.disable();
